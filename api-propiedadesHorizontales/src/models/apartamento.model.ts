@@ -1,4 +1,7 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo, hasMany} from '@loopback/repository';
+import {Torre} from './torre.model';
+import {Propietario} from './propietario.model';
+import {Habitante} from './habitante.model';
 
 @model()
 export class Apartamento extends Entity {
@@ -15,6 +18,14 @@ export class Apartamento extends Entity {
   })
   numero: string;
 
+  @belongsTo(() => Torre)
+  torreId: string;
+
+  @belongsTo(() => Propietario)
+  propietarioId: string;
+
+  @hasMany(() => Habitante)
+  habitantes: Habitante[];
 
   constructor(data?: Partial<Apartamento>) {
     super(data);

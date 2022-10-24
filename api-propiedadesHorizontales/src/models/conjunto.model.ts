@@ -1,4 +1,9 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {ZonasSociales} from './zonas-sociales.model';
+import {Facturacion} from './facturacion.model';
+import {Torre} from './torre.model';
+import {Propietario} from './propietario.model';
+import {Habitante} from './habitante.model';
 
 @model()
 export class Conjunto extends Entity {
@@ -57,6 +62,20 @@ export class Conjunto extends Entity {
   })
   presupuestoActual: number;
 
+  @hasMany(() => ZonasSociales)
+  zonasSociales: ZonasSociales[];
+
+  @hasMany(() => Facturacion)
+  facturacions: Facturacion[];
+
+  @hasMany(() => Torre)
+  torres: Torre[];
+
+  @hasMany(() => Propietario)
+  propietarios: Propietario[];
+
+  @hasMany(() => Habitante)
+  habitantes: Habitante[];
 
   constructor(data?: Partial<Conjunto>) {
     super(data);

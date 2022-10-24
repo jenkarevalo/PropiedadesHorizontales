@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {Conjunto} from './conjunto.model';
 
 @model()
 export class ZonasSociales extends Entity {
@@ -39,6 +40,8 @@ export class ZonasSociales extends Entity {
   })
   horarioAcceso: string;
 
+  @belongsTo(() => Conjunto)
+  conjuntoId: string;
 
   constructor(data?: Partial<ZonasSociales>) {
     super(data);
