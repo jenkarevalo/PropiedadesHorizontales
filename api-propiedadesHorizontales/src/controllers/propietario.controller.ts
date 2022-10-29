@@ -1,3 +1,4 @@
+import { service } from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -19,11 +20,15 @@ import {
 } from '@loopback/rest';
 import {Propietario} from '../models';
 import {PropietarioRepository} from '../repositories';
+import { AutenticacionService } from '../services/autenticacion.service';
+import fetch from 'cross-fetch'; 
 
 export class PropietarioController {
   constructor(
     @repository(PropietarioRepository)
     public propietarioRepository : PropietarioRepository,
+    @service(AutenticacionService)
+    public servicioAutenticacion : AutenticacionService,
   ) {}
 
   @post('/propietarios')
@@ -44,7 +49,24 @@ export class PropietarioController {
     })
     propietario: Omit<Propietario, 'id'>,
   ): Promise<Propietario> {
-    return this.propietarioRepository.create(propietario);
+
+    //let clave = this.servicioAutenticacion.GenerarClave();
+    //let claveCifrada = this.servicioAutenticacion.CifrarClave(clave);
+    //propietario.clave= claveCifrada;
+    propietario.clave = this.servicioAutenticacion.CifrarClave(propietario.clave);
+    let prop = await this.propietarioRepository.create(propietario);
+
+
+    
+    let destino = propietario.email;
+    let asunto = 'Registro exitoso'
+    let contenido = `Hola ${propietario.primerNombre}, su usuario es: ${propietario.email}, su contraseña es:${propietario.clave} `;
+
+    fetch(`http://localhost:5000/enviar-correo?correo=${destino}&asunto=${asunto}&mensaje=${contenido}`)
+     .then((data)=>{
+      console.log(`Esta es la respuesta del servicio ${data}`);
+     })
+      return prop;
   }
 
   @get('/propietarios/count')
