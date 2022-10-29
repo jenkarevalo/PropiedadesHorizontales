@@ -52,6 +52,13 @@ export class Propietario extends Entity {
     required: true,
   })
   telefono: string;
+ 
+  @property({
+   type: 'string',
+   required: false, 
+  })
+  clave:'string'
+
 
   @hasMany(() => Apartamento)
   apartamentos: Apartamento[];
