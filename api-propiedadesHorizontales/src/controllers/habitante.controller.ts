@@ -19,11 +19,16 @@ import {
 } from '@loopback/rest';
 import {Habitante} from '../models';
 import {HabitanteRepository} from '../repositories';
+import {AutenticacionService} from '../services/autenticacion.service';
+import fetch from 'cross-fetch';
+import { service } from '@loopback/core';
 
 export class HabitanteController {
   constructor(
     @repository(HabitanteRepository)
     public habitanteRepository : HabitanteRepository,
+    @service(AutenticacionService)
+    public servicioAutenticacion: AutenticacionService,
   ) {}
 
   @post('/habitantes')
@@ -44,7 +49,18 @@ export class HabitanteController {
     })
     habitante: Omit<Habitante, 'id'>,
   ): Promise<Habitante> {
-    return this.habitanteRepository.create(habitante);
+    habitante.clave = this.servicioAutenticacion.CifrarClave(habitante.clave);
+    let prop = await this.habitanteRepository.create(habitante);
+
+    let destino = habitante.email;
+    let asunto = 'Registro exitoso'
+    let contenido = `Hola ${habitante.primerNombre}, ${habitante.primerApellido}, su usuario es: ${habitante.email}, su contraseña es:${habitante.clave} `;
+
+    fetch(`http://localhost:5000/enviar-correo?correo=${destino}&asunto=${asunto}&mensaje=${contenido}`)
+      .then((data) => {
+        console.log(`Esta es la respuesta del servicio ${data}`);
+      })
+    return prop;
   }
 
   @get('/habitantes/count')
