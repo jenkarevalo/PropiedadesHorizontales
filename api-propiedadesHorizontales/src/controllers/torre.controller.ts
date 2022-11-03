@@ -46,7 +46,6 @@ export class TorreController {
     return this.torreServicio.getTorresDisponibles();
   } 
     
-
   @post('/torres')
   @response(200, {
     description: 'Torre model instance',
