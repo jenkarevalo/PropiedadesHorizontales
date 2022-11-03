@@ -62,6 +62,20 @@ export class Conjunto extends Entity {
   })
   presupuestoActual: number;
 
+  @property({
+    type: 'string',
+    required: false, 
+   })
+   email: string;
+
+  @property({
+    type: 'string',
+    required: false, 
+   })
+   clave:'string'
+
+   
+
   @hasMany(() => ZonasSociales)
   zonasSociales: ZonasSociales[];
 

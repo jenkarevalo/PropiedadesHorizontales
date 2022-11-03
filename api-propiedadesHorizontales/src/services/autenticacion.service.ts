@@ -1,3 +1,7 @@
+//port {/* inject, */  BindingScope,injectable} from '@loopback/core';
+//const cryptoJS = require('crypto-js');
+//const generador = require ('password-generator');
+
 import { injectable, /* inject, */ BindingScope } from '@loopback/core';
 import generador from "password-generator";
 const cryptoJS = require("crypto-js");
