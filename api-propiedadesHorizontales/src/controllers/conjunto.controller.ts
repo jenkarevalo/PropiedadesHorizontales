@@ -1,3 +1,4 @@
+import { service } from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -17,13 +18,17 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import fetch from 'cross-fetch';
 import {Conjunto} from '../models';
 import {ConjuntoRepository} from '../repositories';
+import { AutenticacionService } from '../services/autenticacion.service';
 
 export class ConjuntoController {
   constructor(
-    @repository(ConjuntoRepository)
+    @repository(ConjuntoRepository) 
     public conjuntoRepository : ConjuntoRepository,
+    @service(AutenticacionService) 
+    public autenticacionService: AutenticacionService,
   ) {}
 
   @post('/conjuntos')
@@ -44,7 +49,14 @@ export class ConjuntoController {
     })
     conjunto: Omit<Conjunto, 'id'>,
   ): Promise<Conjunto> {
-    return this.conjuntoRepository.create(conjunto);
+    //let clave = this.autenticacionService.GenerarClave();
+    conjunto.clave = this.autenticacionService.CifrarClave(conjunto.clave);
+    let prop = await this.conjuntoRepository.create(conjunto);  
+    console.log(prop.email);
+    fetch('http://localhost:5000/enviar-correo?asunto=Prueba&mensaje=Incripcion al servicio Propiedades Horizontalez&correoDestino=' + prop.email)
+      .then(response => response.text())
+      .then(data => console.log(`Esta es la respuesta del servicio ${data}`));
+    return prop;
   }
 
   @get('/conjuntos/count')

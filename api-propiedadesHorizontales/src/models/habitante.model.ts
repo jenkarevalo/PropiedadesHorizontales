@@ -53,6 +53,12 @@ export class Habitante extends Entity {
   })
   telefono: string;
 
+  @property({
+    type: 'string',
+    required: false, 
+   })
+   clave:'string'
+
   @belongsTo(() => Apartamento)
   apartamentoId: string;
 

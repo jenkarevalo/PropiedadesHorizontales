@@ -1,3 +1,4 @@
+
 import {injectable, /* inject, */ BindingScope} from '@loopback/core';
 import { repository } from '@loopback/repository';
 import generador from "password-generator";
@@ -7,22 +8,26 @@ import { PropietarioRepository } from '../repositories';
 const cryptoJS = require ("crypto-js");
 const jwt = require ('jsonwebtoken');
 
-@injectable({scope: BindingScope.TRANSIENT})
+
+@injectable({ scope: BindingScope.TRANSIENT })
 export class AutenticacionService {
+
   constructor(
     @repository(PropietarioRepository) 
     public propietarioRepository : PropietarioRepository
   ) {}
 
-  CifrarClave(clave : string){
+
+  CifrarClave(clave: string) {
     let claveCifrada = cryptoJS.MD5(clave).toString();
     return claveCifrada;
   }
 
-  GenerarClave(){
-  let clave = generador(8, false);
-  return this.CifrarClave(clave);
+  GenerarClave() {
+    let clave = generador(8, false);
+    return this.CifrarClave(clave);
   }
+
 
  validarAcceso(usuario:string, contrasenia:string ){
     try{
@@ -65,6 +70,7 @@ export class AutenticacionService {
       return false;
     }
   }
+
 }
 
 

@@ -18,6 +18,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+
 import {Credenciales, Propietario} from '../models';
 import {PropietarioRepository} from '../repositories';
 import { AutenticacionService } from '../services/autenticacion.service';
@@ -25,15 +26,19 @@ import fetch from 'cross-fetch';
 import { PropietarioService } from '../services';
 import { request } from 'http';
 
+
+
 export class PropietarioController {
   constructor(
     @repository(PropietarioRepository)
-    public propietarioRepository : PropietarioRepository,
+    public propietarioRepository: PropietarioRepository,
     @service(AutenticacionService)
+
     public servicioAutenticacion : AutenticacionService,
     @service (PropietarioService)
     public propietarioService : PropietarioService
   ) {}
+
 
   @post('/validar-acceso')
   @response (200, {
@@ -65,7 +70,7 @@ export class PropietarioController {
   @post('/propietarios')
   @response(200, {
     description: 'Propietario model instance',
-    content: {'application/json': {schema: getModelSchemaRef(Propietario)}},
+    content: { 'application/json': { schema: getModelSchemaRef(Propietario) } },
   })
   async create(
     @requestBody({
@@ -88,22 +93,22 @@ export class PropietarioController {
     let prop = await this.propietarioRepository.create(propietario);
 
 
-    
+
     let destino = propietario.email;
     let asunto = 'Registro exitoso'
     let contenido = `Hola ${propietario.primerNombre}, su usuario es: ${propietario.email}, su contraseña es:${propietario.clave} `;
 
     fetch(`http://localhost:5000/enviar-correo?correo=${destino}&asunto=${asunto}&mensaje=${contenido}`)
-     .then((data)=>{
-      console.log(`Esta es la respuesta del servicio ${data}`);
-     })
-      return prop;
+      .then((data) => {
+        console.log(`Esta es la respuesta del servicio ${data}`);
+      })
+    return prop;
   }
 
   @get('/propietarios/count')
   @response(200, {
     description: 'Propietario model count',
-    content: {'application/json': {schema: CountSchema}},
+    content: { 'application/json': { schema: CountSchema } },
   })
   async count(
     @param.where(Propietario) where?: Where<Propietario>,
@@ -118,7 +123,7 @@ export class PropietarioController {
       'application/json': {
         schema: {
           type: 'array',
-          items: getModelSchemaRef(Propietario, {includeRelations: true}),
+          items: getModelSchemaRef(Propietario, { includeRelations: true }),
         },
       },
     },
@@ -132,13 +137,13 @@ export class PropietarioController {
   @patch('/propietarios')
   @response(200, {
     description: 'Propietario PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
+    content: { 'application/json': { schema: CountSchema } },
   })
   async updateAll(
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Propietario, {partial: true}),
+          schema: getModelSchemaRef(Propietario, { partial: true }),
         },
       },
     })
@@ -153,13 +158,13 @@ export class PropietarioController {
     description: 'Propietario model instance',
     content: {
       'application/json': {
-        schema: getModelSchemaRef(Propietario, {includeRelations: true}),
+        schema: getModelSchemaRef(Propietario, { includeRelations: true }),
       },
     },
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(Propietario, {exclude: 'where'}) filter?: FilterExcludingWhere<Propietario>
+    @param.filter(Propietario, { exclude: 'where' }) filter?: FilterExcludingWhere<Propietario>
   ): Promise<Propietario> {
     return this.propietarioRepository.findById(id, filter);
   }
@@ -192,7 +197,7 @@ export class PropietarioController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(Propietario, {partial: true}),
+          schema: getModelSchemaRef(Propietario, { partial: true }),
         },
       },
     })
