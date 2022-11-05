@@ -18,10 +18,12 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Propietario} from '../models';
+import {Credenciales, Propietario} from '../models';
 import {PropietarioRepository} from '../repositories';
 import { AutenticacionService } from '../services/autenticacion.service';
 import fetch from 'cross-fetch'; 
+import { PropietarioService } from '../services';
+import { request } from 'http';
 
 export class PropietarioController {
   constructor(
@@ -29,7 +31,36 @@ export class PropietarioController {
     public propietarioRepository : PropietarioRepository,
     @service(AutenticacionService)
     public servicioAutenticacion : AutenticacionService,
+    @service (PropietarioService)
+    public propietarioService : PropietarioService
   ) {}
+
+  @post('/validar-acceso')
+  @response (200, {
+    description: 'Validar las credenciales de acceso del propietario'
+  })
+  async validarAcceso(
+    @requestBody() credenciales: Credenciales
+  ){
+    let prop = await this.servicioAutenticacion.validarAcceso(credenciales.usuario, credenciales.clave);
+    if (prop){
+      let token = this.servicioAutenticacion.generarTokenJWT(prop);
+      return {
+        datos:{
+          nombre: `${prop.primerNombre} ${prop.primerApellido}`,
+          email: prop.email,
+          id: prop.id
+        },
+        token: token
+        
+      }
+    }
+  }
+
+
+
+
+
 
   @post('/propietarios')
   @response(200, {
@@ -132,6 +163,25 @@ export class PropietarioController {
   ): Promise<Propietario> {
     return this.propietarioRepository.findById(id, filter);
   }
+
+  @get('/propietario-apartamento/{documento}')
+  @response(200, {
+  description: 'Consulta de propietario y apartamento',
+  content: {
+      'application/json': {
+      schema: {
+          type: 'array',
+          items: getModelSchemaRef(Propietario, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async PropietarioPropiedad(
+  @param.path.string('documento')documento:string
+  ): Promise<Propietario[]> {
+    return this.propietarioService.getPropietarioPropiedad(documento);
+  }
+
 
   @patch('/propietarios/{id}')
   @response(204, {

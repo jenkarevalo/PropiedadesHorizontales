@@ -57,7 +57,7 @@ export class Propietario extends Entity {
    type: 'string',
    required: false, 
   })
-  clave:'string'
+  clave:string;
 
 
   @hasMany(() => Apartamento)
