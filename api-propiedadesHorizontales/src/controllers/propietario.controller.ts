@@ -26,8 +26,6 @@ import fetch from 'cross-fetch';
 import { PropietarioService } from '../services';
 import { request } from 'http';
 
-
-
 export class PropietarioController {
   constructor(
     @repository(PropietarioRepository)
@@ -61,11 +59,6 @@ export class PropietarioController {
       }
     }
   }
-
-
-
-
-
 
   @post('/propietarios')
   @response(200, {
@@ -186,7 +179,6 @@ export class PropietarioController {
   ): Promise<Propietario[]> {
     return this.propietarioService.getPropietarioPropiedad(documento);
   }
-
 
   @patch('/propietarios/{id}')
   @response(204, {

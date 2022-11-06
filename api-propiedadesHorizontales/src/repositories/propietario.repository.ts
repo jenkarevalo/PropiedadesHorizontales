@@ -9,7 +9,7 @@ export class PropietarioRepository extends DefaultCrudRepository<
   Propietario,
   typeof Propietario.prototype.id,
   PropietarioRelations
-> {
+>{
 
   public readonly apartamentos: HasManyRepositoryFactory<Apartamento, typeof Propietario.prototype.id>;
 
