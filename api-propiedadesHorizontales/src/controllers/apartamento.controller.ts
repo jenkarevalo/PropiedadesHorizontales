@@ -20,6 +20,7 @@ import {
 import {Apartamento} from '../models';
 import {ApartamentoRepository} from '../repositories';
 
+
 export class ApartamentoController {
   constructor(
     @repository(ApartamentoRepository)

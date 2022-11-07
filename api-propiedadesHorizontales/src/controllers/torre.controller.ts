@@ -20,17 +20,21 @@ import {
 } from '@loopback/rest';
 import {Torre} from '../models';
 import {TorreRepository} from '../repositories';
+
 import { TorreService } from '../services/torre.service';
+
 
 export class TorreController {
   constructor(
     @repository(TorreRepository)
     public torreRepository : TorreRepository,
+
     @service(TorreService)
    public torreServicio: TorreService
+
   ) {}
 
-  @get('/torres-disponibles')
+  /*@get('/torres-disponibles')
   @response(200,{
     description: 'Consultar el estado de los inmuebles de la torre A',
     content: {
@@ -44,7 +48,7 @@ export class TorreController {
   }) 
   async torresConApartamentosDisponibles(): Promise<Torre[]>{
     return this.torreServicio.getTorresDisponibles();
-  } 
+  } */
     
   @post('/torres')
   @response(200, {

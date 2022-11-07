@@ -17,11 +17,12 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {Habitante} from '../models';
+import {Credenciales, Habitante} from '../models';
 import {HabitanteRepository} from '../repositories';
 import {AutenticacionService} from '../services/autenticacion.service';
 import fetch from 'cross-fetch';
 import { service } from '@loopback/core';
+import { HabitanteService } from '../services';
 
 export class HabitanteController {
   constructor(
@@ -29,8 +30,31 @@ export class HabitanteController {
     public habitanteRepository : HabitanteRepository,
     @service(AutenticacionService)
     public servicioAutenticacion: AutenticacionService,
+    @service (HabitanteService)
+    public habitanteService : HabitanteService,
   ) {}
 
+  @post('/validar-acceso')
+  @response (200, {
+    description: 'Validar las credenciales de acceso de los habitantes'
+  })
+  async validarAcceso(
+    @requestBody() credenciales: Credenciales
+  ){
+    let prop = await this.servicioAutenticacion.validarAcceso(credenciales.usuario, credenciales.clave);
+    if (prop){
+      let token = this.servicioAutenticacion.generarTokenJWT(prop);
+      return {
+        datos:{
+          nombre: `${prop.primerNombre} ${prop.primerApellido}`,
+          email: prop.email,
+          id: prop.id
+        },
+        token: token
+      }
+    }
+  }
+  
   @post('/habitantes')
   @response(200, {
     description: 'Habitante model instance',
@@ -125,6 +149,24 @@ export class HabitanteController {
     @param.filter(Habitante, {exclude: 'where'}) filter?: FilterExcludingWhere<Habitante>
   ): Promise<Habitante> {
     return this.habitanteRepository.findById(id, filter);
+  }
+
+  @get('/habitante-apartamento/{documento}')
+  @response(200, {
+  description: 'Consulta de habitantes y su apartamento correspondiente',
+  content: {
+      'application/json': {
+      schema: {
+          type: 'array',
+          items: getModelSchemaRef(Habitante, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async HabitanteApto(
+  @param.path.string('documento')documento:string
+  ): Promise<Habitante[]> {
+    return this.habitanteService.getHabitanteApto(documento);
   }
 
   @patch('/habitantes/{id}')
