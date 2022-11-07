@@ -20,14 +20,18 @@ import {
 } from '@loopback/rest';
 import {Torre} from '../models';
 import {TorreRepository} from '../repositories';
-//import { TorreService } from '../services';
+
+import { TorreService } from '../services/torre.service';
+
 
 export class TorreController {
   constructor(
     @repository(TorreRepository)
     public torreRepository : TorreRepository,
-    //@service(TorreService)
-    //public torreServicio: TorreService
+
+    @service(TorreService)
+   public torreServicio: TorreService
+
   ) {}
 
   /*@get('/torres-disponibles')
