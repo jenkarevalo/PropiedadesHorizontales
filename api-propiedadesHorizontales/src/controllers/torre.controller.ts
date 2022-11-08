@@ -1,3 +1,4 @@
+import { authenticate } from '@loopback/authentication';
 import { service } from '@loopback/core';
 import {
   Count,
@@ -30,11 +31,11 @@ export class TorreController {
     public torreRepository : TorreRepository,
 
     @service(TorreService)
-   public torreServicio: TorreService
+    public torreServicio: TorreService
 
   ) {}
 
-  /*@get('/torres-disponibles')
+  @get('/torres-disponibles')
   @response(200,{
     description: 'Consultar el estado de los inmuebles de la torre A',
     content: {
@@ -48,8 +49,8 @@ export class TorreController {
   }) 
   async torresConApartamentosDisponibles(): Promise<Torre[]>{
     return this.torreServicio.getTorresDisponibles();
-  } */
-    
+  } 
+  @authenticate("conjunto")  
   @post('/torres')
   @response(200, {
     description: 'Torre model instance',
