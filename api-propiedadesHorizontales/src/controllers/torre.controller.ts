@@ -21,7 +21,6 @@ import {
 } from '@loopback/rest';
 import {Torre} from '../models';
 import {TorreRepository} from '../repositories';
-
 import { TorreService } from '../services/torre.service';
 
 

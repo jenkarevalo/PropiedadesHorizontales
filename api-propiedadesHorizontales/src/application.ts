@@ -50,5 +50,4 @@ export class ApiPropiedadApplication extends BootMixin(
     registerAuthenticationStrategy(this, EstrategiaConjunto);
     this.component(AuthenticationComponent);
   }
-
 }
