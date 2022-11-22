@@ -16,7 +16,6 @@ export class PropietarioService {
      where:{
       documento:documento 
      }
-     
     });
    return propietarios;
 

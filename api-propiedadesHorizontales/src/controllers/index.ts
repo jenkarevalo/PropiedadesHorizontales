@@ -22,3 +22,6 @@ export * from './torre.controller';
 export * from './apartamento.controller';
 export * from './habitante.controller';
 export * from './propietario.controller';
+export * from './factura-apartamento.controller';
+export * from './apartamento-factura.controller';
+export * from './factura.controller';
