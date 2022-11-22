@@ -72,7 +72,7 @@ export class Conjunto extends Entity {
     type: 'string',
     required: false, 
    })
-   clave:'string'
+   clave:string;
 
    
 

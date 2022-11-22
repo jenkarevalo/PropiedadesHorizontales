@@ -19,7 +19,7 @@ import {
   response,
 } from '@loopback/rest';
 import fetch from 'cross-fetch';
-import {Conjunto} from '../models';
+import {Conjunto, Ingreso} from '../models';
 import {ConjuntoRepository} from '../repositories';
 import { AutenticacionService } from '../services/autenticacion.service';
 
@@ -30,6 +30,27 @@ export class ConjuntoController {
     @service(AutenticacionService) 
     public autenticacionService: AutenticacionService,
   ) {}
+
+  @post('/validar-acceso-conjunto')
+  @response(200,{
+    description: 'validar el ingreso del Administrador'
+  })
+  async validarAccsesoConjunto(
+    @requestBody() ingreso: Ingreso
+  ){
+    let conj = await this.autenticacionService.validarAccesoConjunto(ingreso.usuario, ingreso.clave);
+    if ( conj ){
+      let token = this.autenticacionService.generarTokenJWTc(conj);
+      return {
+        datos:{
+          nombre:`${conj.nombreAdministrador}`,
+          email: conj.email,
+          id: conj.id
+        },
+        token: token
+      }
+    }
+    }
 
   @post('/conjuntos')
   @response(200, {

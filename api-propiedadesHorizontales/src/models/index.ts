@@ -7,3 +7,5 @@ export * from './propietario.model';
 export * from './habitante.model';
 export * from './credenciales.model';
 export * from './factura.model';
+export * from './ingreso.model';
+

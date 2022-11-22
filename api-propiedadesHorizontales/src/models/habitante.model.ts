@@ -59,6 +59,12 @@ export class Habitante extends Entity {
    })
    clave:'string'
 
+   @property({
+    type: 'string',
+    required: false, 
+   })
+   rol:'string'
+
   @belongsTo(() => Apartamento)
   apartamentoId: string;
 
