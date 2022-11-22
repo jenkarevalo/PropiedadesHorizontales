@@ -90,6 +90,24 @@ export class HabitanteController {
     return prop;
   }
 
+  @get('/habitante-apartamento/{documento}')
+  @response(200, {
+  description: 'Consulta de habitantes y su apartamento correspondiente',
+  content: {
+      'application/json': {
+      schema: {
+          type: 'array',
+          items: getModelSchemaRef(Habitante, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async HabitanteApto(
+  @param.path.string('documento')documento:string
+  ): Promise<Habitante[]> {
+    return this.habitanteService.getHabitanteApto(documento);
+  }
+
   @get('/habitantes/count')
   @response(200, {
     description: 'Habitante model count',
@@ -152,24 +170,6 @@ export class HabitanteController {
     @param.filter(Habitante, {exclude: 'where'}) filter?: FilterExcludingWhere<Habitante>
   ): Promise<Habitante> {
     return this.habitanteRepository.findById(id, filter);
-  }
-
-  @get('/habitante-apartamento/{documento}')
-  @response(200, {
-  description: 'Consulta de habitantes y su apartamento correspondiente',
-  content: {
-      'application/json': {
-      schema: {
-          type: 'array',
-          items: getModelSchemaRef(Habitante, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async HabitanteApto(
-  @param.path.string('documento')documento:string
-  ): Promise<Habitante[]> {
-    return this.habitanteService.getHabitanteApto(documento);
   }
 
   @patch('/habitantes/{id}')

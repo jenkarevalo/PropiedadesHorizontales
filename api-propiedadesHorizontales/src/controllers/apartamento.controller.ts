@@ -1,3 +1,4 @@
+import { service } from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -19,13 +20,32 @@ import {
 } from '@loopback/rest';
 import {Apartamento} from '../models';
 import {ApartamentoRepository} from '../repositories';
+import { ApartamentoService } from '../services';
 
 
 export class ApartamentoController {
   constructor(
     @repository(ApartamentoRepository)
     public apartamentoRepository : ApartamentoRepository,
+    @service(ApartamentoService)
+    public apartamentoService: ApartamentoService
   ) {}
+
+  @get('/apartamentos-disponibles')
+  @response(200,{
+    description: 'Consultar el estado de los apartamentos con sus habitantes',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Apartamento, {includeRelations: true}),
+        },
+      },
+    },
+  }) 
+  async ApartamentosXHabitantes(): Promise<Apartamento[]>{
+    return this.apartamentoService.getApartamentosDisponibles();
+  } 
 
   @post('/apartamentos')
   @response(200, {

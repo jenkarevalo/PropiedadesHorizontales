@@ -20,7 +20,4 @@ export class TorreService {
     });
     return listaTorres;
   }
-
-  //getApartamentosPorTorre()
-
 }
