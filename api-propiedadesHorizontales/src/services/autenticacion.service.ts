@@ -1,26 +1,28 @@
 
-import {injectable, /* inject, */ BindingScope} from '@loopback/core';
+import { injectable, /* inject, */ BindingScope } from '@loopback/core';
 import { repository } from '@loopback/repository';
 import generador from "password-generator";
 import { llaves } from '../config/llaves';
-import { Propietario } from '../models';
-import { PropietarioRepository } from '../repositories';
+import { Habitante, Propietario } from '../models';
+import { HabitanteRepository, PropietarioRepository } from '../repositories';
 import { Conjunto } from '../models';
 import { ConjuntoRepository } from '../repositories';
 
-const cryptoJS = require ("crypto-js");
-const jwt = require ('jsonwebtoken');
+const cryptoJS = require("crypto-js");
+const jwt = require('jsonwebtoken');
 
 
 @injectable({ scope: BindingScope.TRANSIENT })
 export class AutenticacionService {
 
   constructor(
-    @repository(PropietarioRepository) 
-    public propietarioRepository : PropietarioRepository,
-    @repository(ConjuntoRepository) 
-    public conjuntoRepository : ConjuntoRepository,
-  ) {}
+    @repository(PropietarioRepository)
+    public propietarioRepository: PropietarioRepository,
+    @repository(ConjuntoRepository)
+    public conjuntoRepository: ConjuntoRepository,
+    @repository(HabitanteRepository)
+    public habitanteRepository: HabitanteRepository,
+  ) { }
 
 
   CifrarClave(clave: string) {
@@ -34,10 +36,10 @@ export class AutenticacionService {
   }
 
 
- validarAcceso(usuario:string, contrasenia:string ){
-    try{
+  validarAcceso(usuario: string, contrasenia: string) {
+    try {
       let prop = this.propietarioRepository.findOne({
-        where:{
+        where: {
           email: usuario,
           clave: contrasenia
         }
@@ -45,15 +47,15 @@ export class AutenticacionService {
       if (prop)
         return prop;
 
-      return false;  
-    } catch (error){
       return false;
-   };
+    } catch (error) {
+      return false;
+    };
 
   };
-  
+
   //METODO QUE GENERE TOKEN
-  generarTokenJWT(propietario: Propietario){
+  generarTokenJWT(propietario: Propietario) {
     let token = jwt.sign({
       date: {
         id: propietario.id,
@@ -67,19 +69,19 @@ export class AutenticacionService {
 
   }
 
-  validarTokenJWT(token:string){
-    try{
+  validarTokenJWT(token: string) {
+    try {
       let datos = jwt.verify(token, llaves.claveJWT)
       return datos;
-    }catch (error){
+    } catch (error) {
       return false;
     }
   }
 
-  validarAccesoConjunto(usuario:string, contrasenia:string ){
-    try{
+  validarAccesoConjunto(usuario: string, contrasenia: string) {
+    try {
       let conj = this.conjuntoRepository.findOne({
-        where:{
+        where: {
           email: usuario,
           clave: contrasenia
         }
@@ -87,15 +89,15 @@ export class AutenticacionService {
       if (conj)
         return conj;
 
-      return false;  
-    } catch (error){
       return false;
-   }
+    } catch (error) {
+      return false;
+    }
 
   }
 
   //Metodo pata generar token
-  generarTokenJWTc(conjunto:Conjunto ){
+  generarTokenJWTc(conjunto: Conjunto) {
     let token = jwt.sign({
       data: {
         id: conjunto.id,
@@ -108,7 +110,49 @@ export class AutenticacionService {
     return token;
   }
 
-  validarTokenJWTc(token: string){
+  validarTokenJWTc(token: string) {
+    try {
+      let datos = jwt.verify(token, llaves.claveJWT)
+      return datos;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  validarAccesoHabitante(usuario: string, contrasenia: string) {
+    try {
+      let hab = this.habitanteRepository.findOne({
+        where: {
+          email: usuario,
+          //clave: contrasenia
+        }
+      });
+      if (hab)
+        return hab;
+
+      return false;
+    } catch (error) {
+      return false;
+    };
+
+  };
+
+  //METODO QUE GENERE TOKEN
+  generarTokenJWTHabitante(habitante: Habitante) {
+    let token = jwt.sign({
+      date: {
+        id: habitante.id,
+        correo: habitante.email,
+        nombre: `${habitante.primerNombre} ${habitante.primerApellido}`
+      }
+    },
+      llaves.claveJWT
+    );
+    return token;
+
+  }
+
+  validarTokenJWTHabitante(token: string) {
     try {
       let datos = jwt.verify(token, llaves.claveJWT)
       return datos;

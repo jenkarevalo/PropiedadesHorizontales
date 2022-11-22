@@ -19,11 +19,5 @@ export class PropietarioService {
      
     });
    return propietarios;
-
   }
-
 }
-
-
-
-

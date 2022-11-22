@@ -19,10 +19,10 @@ import {
   response,
 } from '@loopback/rest';
 
-import {Credenciales, Propietario} from '../models';
-import {PropietarioRepository} from '../repositories';
+import { Credenciales, Propietario } from '../models';
+import { PropietarioRepository } from '../repositories';
 import { AutenticacionService } from '../services/autenticacion.service';
-import fetch from 'cross-fetch'; 
+import fetch from 'cross-fetch';
 import { PropietarioService } from '../services';
 import { request } from 'http';
 
@@ -32,30 +32,29 @@ export class PropietarioController {
     public propietarioRepository: PropietarioRepository,
     @service(AutenticacionService)
 
-    public servicioAutenticacion : AutenticacionService,
-    @service (PropietarioService)
-    public propietarioService : PropietarioService
-  ) {}
+    public servicioAutenticacion: AutenticacionService,
+    @service(PropietarioService)
+    public propietarioService: PropietarioService
+  ) { }
 
 
   @post('/validar-acceso')
-  @response (200, {
+  @response(200, {
     description: 'Validar las credenciales de acceso del propietario'
   })
   async validarAcceso(
     @requestBody() credenciales: Credenciales
-  ){
+  ) {
     let prop = await this.servicioAutenticacion.validarAcceso(credenciales.usuario, credenciales.clave);
-    if (prop){
+    if (prop) {
       let token = this.servicioAutenticacion.generarTokenJWT(prop);
       return {
-        datos:{
+        datos: {
           nombre: `${prop.primerNombre} ${prop.primerApellido}`,
           email: prop.email,
           id: prop.id
         },
         token: token
-        
       }
     }
   }
@@ -164,18 +163,18 @@ export class PropietarioController {
 
   @get('/propietario-apartamento/{documento}')
   @response(200, {
-  description: 'Consulta de propietario y apartamento',
-  content: {
+    description: 'Consulta de propietario y apartamento',
+    content: {
       'application/json': {
-      schema: {
+        schema: {
           type: 'array',
-          items: getModelSchemaRef(Propietario, {includeRelations: true}),
+          items: getModelSchemaRef(Propietario, { includeRelations: true }),
         },
       },
     },
   })
   async PropietarioPropiedad(
-  @param.path.string('documento')documento:string
+    @param.path.string('documento') documento: string
   ): Promise<Propietario[]> {
     return this.propietarioService.getPropietarioPropiedad(documento);
   }

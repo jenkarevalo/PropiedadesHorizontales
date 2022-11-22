@@ -7,7 +7,7 @@ import parseBearerToken from "parse-bearer-token";
 import { ParsedQs } from "qs";
 import { AutenticacionService } from "../services";
 
-export class EstrategiaAdministrador implements AuthenticationStrategy{
+export class EstrategiaHabitante implements AuthenticationStrategy{
     name: string ='habitante';
    
     constructor(
@@ -18,7 +18,7 @@ export class EstrategiaAdministrador implements AuthenticationStrategy{
     async authenticate(request: Request): Promise<UserProfile | RedirectRoute | undefined> {
         let token = parseBearerToken(request);
         if (token){
-          let datos = this.autenticacionService.validarTokenJWT(token);
+          let datos = this.autenticacionService.validarTokenJWTHabitante(token);
            if (datos){ 
               let perfil: UserProfile = Object.assign({
                  nombre: datos.data.primerNombre

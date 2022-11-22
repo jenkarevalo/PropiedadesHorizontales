@@ -23,7 +23,9 @@ import {AutenticacionService} from '../services/autenticacion.service';
 import fetch from 'cross-fetch';
 import { service } from '@loopback/core';
 import { HabitanteService } from '../services';
+import { authenticate } from '@loopback/authentication';
 
+//@authenticate("habitantes")
 export class HabitanteController {
   constructor(
     @repository(HabitanteRepository)
@@ -34,21 +36,22 @@ export class HabitanteController {
     public habitanteService : HabitanteService,
   ) {}
 
+  //@authenticate.skip()
   @post('/validar-acceso')
   @response (200, {
     description: 'Validar las credenciales de acceso de los habitantes'
   })
-  async validarAcceso(
+  async validarAccesoHabitante(
     @requestBody() credenciales: Credenciales
   ){
-    let prop = await this.servicioAutenticacion.validarAcceso(credenciales.usuario, credenciales.clave);
-    if (prop){
-      let token = this.servicioAutenticacion.generarTokenJWT(prop);
+    let hab = await this.servicioAutenticacion.validarAccesoHabitante(credenciales.usuario, credenciales.clave);
+    if (hab){
+      let token = this.servicioAutenticacion.generarTokenJWTHabitante(hab);
       return {
         datos:{
-          nombre: `${prop.primerNombre} ${prop.primerApellido}`,
-          email: prop.email,
-          id: prop.id
+          nombre: `${hab.primerNombre} ${hab.primerApellido}`,
+          email: hab.email,
+          id: hab.id
         },
         token: token
       }
