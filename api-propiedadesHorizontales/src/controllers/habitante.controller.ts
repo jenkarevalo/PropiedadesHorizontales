@@ -23,7 +23,9 @@ import {AutenticacionService} from '../services/autenticacion.service';
 import fetch from 'cross-fetch';
 import { service } from '@loopback/core';
 import { HabitanteService } from '../services';
+import { authenticate } from '@loopback/authentication';
 
+//@authenticate("habitantes")
 export class HabitanteController {
   constructor(
     @repository(HabitanteRepository)
@@ -34,21 +36,22 @@ export class HabitanteController {
     public habitanteService : HabitanteService,
   ) {}
 
+  //@authenticate.skip()
   @post('/validar-acceso')
   @response (200, {
     description: 'Validar las credenciales de acceso de los habitantes'
   })
-  async validarAcceso(
+  async validarAccesoHabitante(
     @requestBody() credenciales: Credenciales
   ){
-    let prop = await this.servicioAutenticacion.validarAcceso(credenciales.usuario, credenciales.clave);
-    if (prop){
-      let token = this.servicioAutenticacion.generarTokenJWT(prop);
+    let hab = await this.servicioAutenticacion.validarAccesoHabitante(credenciales.usuario, credenciales.clave);
+    if (hab){
+      let token = this.servicioAutenticacion.generarTokenJWTHabitante(hab);
       return {
         datos:{
-          nombre: `${prop.primerNombre} ${prop.primerApellido}`,
-          email: prop.email,
-          id: prop.id
+          nombre: `${hab.primerNombre} ${hab.primerApellido}`,
+          email: hab.email,
+          id: hab.id
         },
         token: token
       }
@@ -85,6 +88,24 @@ export class HabitanteController {
         console.log(`Esta es la respuesta del servicio ${data}`);
       })
     return prop;
+  }
+
+  @get('/habitante-apartamento/{documento}')
+  @response(200, {
+  description: 'Consulta de habitantes y su apartamento correspondiente',
+  content: {
+      'application/json': {
+      schema: {
+          type: 'array',
+          items: getModelSchemaRef(Habitante, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async HabitanteApto(
+  @param.path.string('documento')documento:string
+  ): Promise<Habitante[]> {
+    return this.habitanteService.getHabitanteApto(documento);
   }
 
   @get('/habitantes/count')
@@ -149,24 +170,6 @@ export class HabitanteController {
     @param.filter(Habitante, {exclude: 'where'}) filter?: FilterExcludingWhere<Habitante>
   ): Promise<Habitante> {
     return this.habitanteRepository.findById(id, filter);
-  }
-
-  @get('/habitante-apartamento/{documento}')
-  @response(200, {
-  description: 'Consulta de habitantes y su apartamento correspondiente',
-  content: {
-      'application/json': {
-      schema: {
-          type: 'array',
-          items: getModelSchemaRef(Habitante, {includeRelations: true}),
-        },
-      },
-    },
-  })
-  async HabitanteApto(
-  @param.path.string('documento')documento:string
-  ): Promise<Habitante[]> {
-    return this.habitanteService.getHabitanteApto(documento);
   }
 
   @patch('/habitantes/{id}')

@@ -49,6 +49,7 @@ export class TorreController {
   async torresConApartamentosDisponibles(): Promise<Torre[]>{
     return this.torreServicio.getTorresDisponibles();
   } 
+  
   @authenticate("conjunto")  
   @post('/torres')
   @response(200, {

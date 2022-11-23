@@ -12,6 +12,7 @@ import {MySequence} from './sequence';
 import { EstrategiaAdministrador } from './strategies/admin.strategy';
 import { AuthenticationComponent, registerAuthenticationStrategy } from '@loopback/authentication';
 import { EstrategiaConjunto } from './strategies/conjunto.strategy';
+import { EstrategiaHabitante } from './strategies/habitante.strategy';
 
 export {ApplicationConfig};
 
@@ -48,6 +49,9 @@ export class ApiPropiedadApplication extends BootMixin(
     this.component(AuthenticationComponent);
     
     registerAuthenticationStrategy(this, EstrategiaConjunto);
+    this.component(AuthenticationComponent);
+
+    registerAuthenticationStrategy(this, EstrategiaHabitante);
     this.component(AuthenticationComponent);
   }
 }
